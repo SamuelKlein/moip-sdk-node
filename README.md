@@ -1,8 +1,8 @@
-<img src="https://gist.githubusercontent.com/joaolucasl/00f53024cecf16410d5c3212aae92c17/raw/1789a2131ee389aeb44e3a9d5333f59cfeebc089/moip-icon.png" align="right" />
+<img src="https://user-images.githubusercontent.com/4432322/48435349-66f65b80-e763-11e8-9cb8-6dd8335e62d7.png" align="right" />
 
-# Moip SDK Node
-> The easiest way and fastest way to integrate Moip to your Node application
-> Node.js module to integrate Moip v2 and subscriptions API
+# Wirecard SDK Node
+> The easiest way and fastest way to integrate Wirecard to your Node application
+> Node.js module to integrate Wirecard v2 and subscriptions API
 
 [![Build Status](https://travis-ci.org/moip/moip-sdk-node.svg?branch=master)](https://travis-ci.org/moip/moip-sdk-node)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com)
@@ -12,7 +12,7 @@
 
 - [Installing](#installing)
 - [Getting started](#getting-started)
-- [Moip v2 Examples](#moip-v2-examples):
+- [Wirecard v2 Examples](#wirecard-v2-examples):
   - [Customers](#customers)
     - [Create](#create)
     - [Get](#get)
@@ -45,7 +45,7 @@
     -  [Get](#get-2)
     -  [Remove](#remove)
     -  [Get all](#get-all-2)
-  - [Moip Connect](#moip-connect)
+  - [Wirecard Connect](#wirecard-connect)
     - [Ask for OAuth permission](#ask-for-oauth-permission)
     - [Generate access token OAuth](#generate-access-token-oauth)
   - [Multiorder](#multiorder)
@@ -54,14 +54,21 @@
   - [Multipayment](#multipayment)
     - [Create Multipayment](#create-multipayment)
     - [Get Multipayment](#get-multipayment)
-  - [Moip Account](#moip-account)
+  - [Account](#account)
     - [Create](#create-3)
     - [Get](#get-3)
+    - [Check Existence](#check-existence)
   - [Bank Account](#bank-account)
     -  [Create](#create-4)
     -  [Get](#get-4)
     -  [Get all](#get-all-3)
     -  [Remove](#remove-1)
+  - [Balance](#balance)
+    - [Get balance](#get-balance)
+  - [Transfers](#transfers)
+	-  [Create transfer](#create-transfer)
+    -  [Get transfer](#get-transfer)
+    -  [Get all transfers](#get-all-transfers)
   - [Webhooks](#webhooks)
     -  [Get](#get-5)
     -  [Query](#query-2)
@@ -577,12 +584,12 @@ moip.notification.getAll()
 ```
 
 
-## Moip Connect
+## Wirecard Connect
 #### Ask for OAuth permission
 
 To ask for OAuth permission for a merchant, you need to redirect them to a page in which they will log in with their Moip credentials to authorize your access to their account.
 
-The complete list of available scopes for permission is available [in our official documentation here](https://documentao-moip.readme.io/v2.1/reference#section-scopes-dispon%C3%ADveis).
+The complete list of available scopes for permission is available [in our official documentation here](https://dev.wirecard.com.br/v2.0/reference#section-scopes-dispon%C3%ADveis).
 ```javascript
 moip.connect.getAuthorizeUrl({
     clientId: 'APP-XXXXXXXXXXXX',
@@ -792,7 +799,7 @@ moip.multipayment.getOne('MPY-6W6DILA4BZ1X')
       })
 ```
 
-## Moip Account
+## Account
 
 #### Create
 ```javascript
@@ -849,6 +856,19 @@ moip.account.getOne(accountId)
     })
 ```
 
+#### Check Existence
+Verify if an account already exists through the `e-mail` or `tax document`
+```javascript
+moip.account.exists({
+    email: 'integracao@labs.moip.com.br'
+    // tax_document: 880.956.367-03
+    }).then(() => {
+        console.log('If here, the account exists')
+    }).catch(() => {
+        console.log('If here, the account does not exist')
+    })
+```
+
 ## Bank Account
 #### Create
 ```javascript
@@ -898,6 +918,67 @@ moip.bankAccount.getAll(moipAccountId)
 moip.bankAccount.remove(bankAccountId)
     .then((response) => {
         console.log(response)
+    }).catch((err) => {
+        console.log(err)
+    })
+```
+
+## Balance
+#### Get balance
+```javascript
+moip.balance.getOne()
+    .then((response) => {
+        console.log(response)
+    }).catch((err) => {
+        console.log(err)
+    })
+```
+
+## Transfers
+#### Create transfer
+```javascript
+moip.transfer.create({
+    amount: 500,
+    transferInstrument: {
+        method: "BANK_ACCOUNT",
+        bankAccount: {
+            type: "CHECKING",
+            bankNumber: 1,
+            agencyNumber: 1111,
+            agencyCheckNumber: 2,
+            accountNumber: 9999,
+            accountCheckNumber: 8,
+            holder: {
+                fullname: "Nome do Portador",
+                taxDocument: {
+                    type: "CPF",
+                    number: "22222222222"
+                }
+            }
+        }
+    }
+}).then((response) => {
+    console.log(response.body)
+}).catch((response) => {
+    console.log(response.body)
+})
+```
+
+#### Get transfer
+```javascript
+moip.transfer.getOne(transferId)
+    .then((response) => {
+        console.log(response.body)
+    }).catch((err) => {
+        console.log(err)
+    })
+```
+
+#### Get all transfers
+```javascript
+moip.transfer.getAll()
+    .then((response) => {
+        console.log(response.body)
     }).catch((err) => {
         console.log(err)
     })
@@ -967,6 +1048,7 @@ moip.webhook.getAll()
 - [Igor Lopes](https://github.com/Igor-Lopes)
 - [Daniel Leonardo](https://github.com/danielfnz)
 - [Luiz Fernando](https://github.com/lfernando-silva)
+- [Karl Alexander](https://github.com/karlsmarx)
 
 ## Slack Community [![Slack](https://user-images.githubusercontent.com/4432322/37355972-ba0e9f32-26c3-11e8-93d3-39917eb24109.png)](https://slackin-cqtchmfquq.now.sh)
 
